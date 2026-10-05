@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Usage: ./build-plugin.sh <github-owner/repo> <tag> [name]
+# Usage: ./build-plugin.sh <github-owner/repo> <tag> [name] [subdir]
+# [subdir] is the plugin directory inside a monorepo (e.g. packages/grafana-llm-app).
 # Clones the repo at <tag>, builds it, and packs dist/ into out/<plugin-id>-<version>.zip
 # in the layout Grafana expects (single top-level <plugin-id>/ directory).
 set -euo pipefail
@@ -21,7 +22,8 @@ else
   run npm ci --allow-git=all --no-audit --no-fund
   run npm run build
 fi
-# Datasources with a Go backend (clickhouse, infinity) ship per-arch binaries inside dist/.
+cd "$src/${4:-.}"
+# Plugins with a Go backend (clickhouse, infinity) ship per-arch binaries inside dist/.
 if [ -f Magefile.go ]; then
   go run github.com/magefile/mage -v build:linux
 fi
