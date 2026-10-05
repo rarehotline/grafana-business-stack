@@ -1,0 +1,26 @@
+# Demo stack: our Grafana image + ClickHouse + Prometheus, all with live data.
+# Run: podman-compose up -d   (image must be loaded first: see ../README.md)
+services:
+  grafana:
+    image: localhost/grafana-business:13.0.2
+    ports: ["3000:3000"]
+    volumes:
+      - ./provisioning:/etc/grafana/provisioning:ro,Z
+      - grafana-data:/var/lib/grafana-data
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?set GRAFANA_ADMIN_PASSWORD in demo/.env}
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /etc/grafana/provisioning/dashboards/json/00-overview.json
+    depends_on: [clickhouse, prometheus]
+  clickhouse:
+    image: docker.io/clickhouse/clickhouse-server:latest
+    environment: {CLICKHOUSE_DB: demo, CLICKHOUSE_PASSWORD: demo}
+    volumes:
+      - ./clickhouse-init:/docker-entrypoint-initdb.d:ro,Z
+      - ./clickhouse-config/prometheus.xml:/etc/clickhouse-server/config.d/prometheus.xml:ro,Z
+  prometheus:
+    image: docker.io/prom/prometheus:latest
+    volumes: ["./prometheus.yml:/etc/prometheus/prometheus.yml:ro,Z"]
+volumes:
+  grafana-data:

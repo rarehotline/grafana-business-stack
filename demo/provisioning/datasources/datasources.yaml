@@ -1,0 +1,17 @@
+apiVersion: 1
+datasources:
+  - name: Prometheus
+    uid: prom
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+  - name: ClickHouse
+    uid: ch
+    type: grafana-clickhouse-datasource
+    jsonData: {host: clickhouse, port: 9000, protocol: native, username: default, defaultDatabase: demo}
+    secureJsonData: {password: demo}
+  - name: Infinity
+    uid: inf
+    type: yesoreyeram-infinity-datasource
+    jsonData: {allowedHosts: ["http://prometheus:9090"]}

@@ -1,0 +1,1212 @@
+{
+ "uid": "overview",
+ "title": "00 Overview (all plugins)",
+ "schemaVersion": 41,
+ "version": 1,
+ "refresh": "30s",
+ "tags": [
+  "demo"
+ ],
+ "time": {
+  "from": "now-1h",
+  "to": "now"
+ },
+ "panels": [
+  {
+   "type": "stat",
+   "title": "Avg CPU (ClickHouse)",
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "ch"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "ch"
+     },
+     "editorType": "sql",
+     "rawSql": "SELECT avg(cpu) AS cpu FROM demo.metrics WHERE $__timeFilter(ts)",
+     "format": 1
+    }
+   ],
+   "description": "",
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ]
+    }
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percent",
+     "decimals": 1,
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "green",
+        "value": null
+       },
+       {
+        "color": "orange",
+        "value": 60
+       },
+       {
+        "color": "red",
+        "value": 80
+       }
+      ]
+     }
+    },
+    "overrides": []
+   },
+   "id": 1,
+   "gridPos": {
+    "x": 0,
+    "y": 0,
+    "w": 12,
+    "h": 9
+   }
+  },
+  {
+   "type": "stat",
+   "title": "Targets up",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prom"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "prom"
+     },
+     "expr": "sum(up)",
+     "legendFormat": "up",
+     "range": true,
+     "instant": false
+    }
+   ],
+   "description": "",
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ]
+    },
+    "colorMode": "background"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "color": "red",
+        "value": null
+       },
+       {
+        "color": "green",
+        "value": 3
+       }
+      ]
+     }
+    },
+    "overrides": []
+   },
+   "id": 2,
+   "gridPos": {
+    "x": 12,
+    "y": 0,
+    "w": 12,
+    "h": 9
+   }
+  },
+  {
+   "type": "timeseries",
+   "title": "cpu by host (ClickHouse)",
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "ch"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "ch"
+     },
+     "editorType": "sql",
+     "rawSql": "SELECT $__timeInterval(ts) AS time, host, avg(cpu) AS cpu FROM demo.metrics WHERE $__timeFilter(ts) GROUP BY time, host ORDER BY time",
+     "format": 0
+    }
+   ],
+   "description": "",
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    }
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percent",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 12
+     }
+    },
+    "overrides": []
+   },
+   "id": 3,
+   "gridPos": {
+    "x": 0,
+    "y": 9,
+    "w": 12,
+    "h": 9
+   }
+  },
+  {
+   "type": "timeseries",
+   "title": "Prometheus HTTP requests/s by handler",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prom"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "prom"
+     },
+     "expr": "sum by (handler) (rate(prometheus_http_requests_total[1m]))",
+     "legendFormat": "{{handler}}",
+     "range": true,
+     "instant": false
+    }
+   ],
+   "description": "",
+   "options": {
+    "legend": {
+     "displayMode": "table",
+     "placement": "right",
+     "calcs": [
+      "lastNotNull"
+     ]
+    }
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "reqps",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 10
+     }
+    },
+    "overrides": []
+   },
+   "id": 4,
+   "gridPos": {
+    "x": 12,
+    "y": 9,
+    "w": 12,
+    "h": 9
+   }
+  },
+  {
+   "type": "volkovlabs-table-panel",
+   "title": "Business Table: latest metrics (ClickHouse)",
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "ch"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "ch"
+     },
+     "editorType": "sql",
+     "rawSql": "SELECT ts, host, cpu, mem, rps FROM demo.metrics WHERE $__timeFilter(ts) ORDER BY ts DESC LIMIT 100",
+     "format": 1
+    }
+   ],
+   "description": "",
+   "options": {
+    "isColumnManagerAvailable": false,
+    "nestedObjects": [],
+    "saveUserPreference": false,
+    "showFiltersInColumnManager": false,
+    "showSortingInColumnManager": false,
+    "tables": [
+     {
+      "actionsColumnConfig": {
+       "alignment": "start",
+       "fontSize": "sm",
+       "label": "",
+       "width": {
+        "auto": false,
+        "value": 100
+       }
+      },
+      "addRow": {
+       "enabled": false,
+       "permission": {
+        "mode": "",
+        "userRole": []
+       },
+       "request": {
+        "datasource": "",
+        "payload": {}
+       }
+      },
+      "deleteRow": {
+       "enabled": false,
+       "permission": {
+        "mode": "",
+        "userRole": []
+       },
+       "request": {
+        "datasource": "",
+        "payload": {}
+       }
+      },
+      "expanded": false,
+      "items": [
+       {
+        "aggregation": "none",
+        "appearance": {
+         "alignment": "start",
+         "background": {
+          "applyToRow": false
+         },
+         "colors": {},
+         "header": {
+          "fontSize": "md"
+         },
+         "width": {
+          "auto": false,
+          "min": 20,
+          "value": 100
+         },
+         "wrap": true
+        },
+        "edit": {
+         "editor": {
+          "type": "string"
+         },
+         "enabled": false,
+         "permission": {
+          "mode": "",
+          "userRole": []
+         }
+        },
+        "enabled": true,
+        "field": {
+         "name": "ts",
+         "source": "A"
+        },
+        "fileCell": {
+         "size": "md",
+         "text": "",
+         "variant": "primary"
+        },
+        "filter": {
+         "enabled": false,
+         "mode": "client",
+         "variable": ""
+        },
+        "footer": [],
+        "gauge": {
+         "mode": "basic",
+         "valueDisplayMode": "text",
+         "valueSize": 14
+        },
+        "group": false,
+        "label": "",
+        "newRowEdit": {
+         "editor": {
+          "type": "string"
+         },
+         "enabled": false
+        },
+        "objectId": "",
+        "pin": "",
+        "scale": "auto",
+        "sort": {
+         "descFirst": false,
+         "enabled": false
+        },
+        "type": "auto"
+       },
+       {
+        "aggregation": "none",
+        "appearance": {
+         "alignment": "start",
+         "background": {
+          "applyToRow": false
+         },
+         "colors": {},
+         "header": {
+          "fontSize": "md"
+         },
+         "width": {
+          "auto": false,
+          "min": 20,
+          "value": 100
+         },
+         "wrap": true
+        },
+        "edit": {
+         "editor": {
+          "type": "string"
+         },
+         "enabled": false,
+         "permission": {
+          "mode": "",
+          "userRole": []
+         }
+        },
+        "enabled": true,
+        "field": {
+         "name": "host",
+         "source": "A"
+        },
+        "fileCell": {
+         "size": "md",
+         "text": "",
+         "variant": "primary"
+        },
+        "filter": {
+         "enabled": false,
+         "mode": "client",
+         "variable": ""
+        },
+        "footer": [],
+        "gauge": {
+         "mode": "basic",
+         "valueDisplayMode": "text",
+         "valueSize": 14
+        },
+        "group": false,
+        "label": "",
+        "newRowEdit": {
+         "editor": {
+          "type": "string"
+         },
+         "enabled": false
+        },
+        "objectId": "",
+        "pin": "",
+        "scale": "auto",
+        "sort": {
+         "descFirst": false,
+         "enabled": false
+        },
+        "type": "auto"
+       },
+       {
+        "aggregation": "none",
+        "appearance": {
+         "alignment": "start",
+         "background": {
+          "applyToRow": false
+         },
+         "colors": {},
+         "header": {
+          "fontSize": "md"
+         },
+         "width": {
+          "auto": false,
+          "min": 20,
+          "value": 100
+         },
+         "wrap": true
+        },
+        "edit": {
+         "editor": {
+          "type": "string"
+         },
+         "enabled": false,
+         "permission": {
+          "mode": "",
+          "userRole": []
+         }
+        },
+        "enabled": true,
+        "field": {
+         "name": "cpu",
+         "source": "A"
+        },
+        "fileCell": {
+         "size": "md",
+         "text": "",
+         "variant": "primary"
+        },
+        "filter": {
+         "enabled": false,
+         "mode": "client",
+         "variable": ""
+        },
+        "footer": [],
+        "gauge": {
+         "mode": "basic",
+         "valueDisplayMode": "text",
+         "valueSize": 14
+        },
+        "group": false,
+        "label": "",
+        "newRowEdit": {
+         "editor": {
+          "type": "string"
+         },
+         "enabled": false
+        },
+        "objectId": "",
+        "pin": "",
+        "scale": "auto",
+        "sort": {
+         "descFirst": false,
+         "enabled": false
+        },
+        "type": "auto"
+       },
+       {
+        "aggregation": "none",
+        "appearance": {
+         "alignment": "start",
+         "background": {
+          "applyToRow": false
+         },
+         "colors": {},
+         "header": {
+          "fontSize": "md"
+         },
+         "width": {
+          "auto": false,
+          "min": 20,
+          "value": 100
+         },
+         "wrap": true
+        },
+        "edit": {
+         "editor": {
+          "type": "string"
+         },
+         "enabled": false,
+         "permission": {
+          "mode": "",
+          "userRole": []
+         }
+        },
+        "enabled": true,
+        "field": {
+         "name": "mem",
+         "source": "A"
+        },
+        "fileCell": {
+         "size": "md",
+         "text": "",
+         "variant": "primary"
+        },
+        "filter": {
+         "enabled": false,
+         "mode": "client",
+         "variable": ""
+        },
+        "footer": [],
+        "gauge": {
+         "mode": "basic",
+         "valueDisplayMode": "text",
+         "valueSize": 14
+        },
+        "group": false,
+        "label": "",
+        "newRowEdit": {
+         "editor": {
+          "type": "string"
+         },
+         "enabled": false
+        },
+        "objectId": "",
+        "pin": "",
+        "scale": "auto",
+        "sort": {
+         "descFirst": false,
+         "enabled": false
+        },
+        "type": "auto"
+       },
+       {
+        "aggregation": "none",
+        "appearance": {
+         "alignment": "start",
+         "background": {
+          "applyToRow": false
+         },
+         "colors": {},
+         "header": {
+          "fontSize": "md"
+         },
+         "width": {
+          "auto": false,
+          "min": 20,
+          "value": 100
+         },
+         "wrap": true
+        },
+        "edit": {
+         "editor": {
+          "type": "string"
+         },
+         "enabled": false,
+         "permission": {
+          "mode": "",
+          "userRole": []
+         }
+        },
+        "enabled": true,
+        "field": {
+         "name": "rps",
+         "source": "A"
+        },
+        "fileCell": {
+         "size": "md",
+         "text": "",
+         "variant": "primary"
+        },
+        "filter": {
+         "enabled": false,
+         "mode": "client",
+         "variable": ""
+        },
+        "footer": [],
+        "gauge": {
+         "mode": "basic",
+         "valueDisplayMode": "text",
+         "valueSize": 14
+        },
+        "group": false,
+        "label": "",
+        "newRowEdit": {
+         "editor": {
+          "type": "string"
+         },
+         "enabled": false
+        },
+        "objectId": "",
+        "pin": "",
+        "scale": "auto",
+        "sort": {
+         "descFirst": false,
+         "enabled": false
+        },
+        "type": "auto"
+       }
+      ],
+      "name": "Table",
+      "pagination": {
+       "defaultPageSize": 10,
+       "enabled": false,
+       "mode": "client"
+      },
+      "rowHighlight": {
+       "backgroundColor": "transparent",
+       "columnId": "",
+       "enabled": false,
+       "scrollTo": "",
+       "smooth": false,
+       "variable": ""
+      },
+      "showHeader": true,
+      "update": {
+       "datasource": "",
+       "payload": {}
+      }
+     }
+    ],
+    "tabsSorting": false,
+    "toolbar": {
+     "alignment": "left",
+     "export": false,
+     "exportFormats": []
+    }
+   },
+   "id": 5,
+   "gridPos": {
+    "x": 0,
+    "y": 18,
+    "w": 12,
+    "h": 9
+   }
+  },
+  {
+   "type": "volkovlabs-echarts-panel",
+   "title": "Business Charts: CPU by host (ECharts)",
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "ch"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "ch"
+     },
+     "editorType": "sql",
+     "rawSql": "SELECT toStartOfFiveMinutes(ts) AS ts, host, round(avg(cpu), 1) AS cpu FROM demo.metrics WHERE $__timeFilter(ts) GROUP BY ts, host ORDER BY ts",
+     "format": 1
+    }
+   ],
+   "description": "",
+   "options": {
+    "getOption": "const f=context.panel.data.series[0].fields; const get=n=>f.find(x=>x.name===n).values;const ts=get('ts'), host=get('host'), cpu=get('cpu'); const hosts=[...new Set(host)];const times=[...new Set(ts)].sort((a,b)=>a-b);return {tooltip:{trigger:'axis'}, legend:{data:hosts, textStyle:{color:'#ccc'}},grid:{left:40,right:20,top:40,bottom:30},xAxis:{type:'category', data:times.map(t=>new Date(t).toLocaleTimeString().slice(0,5))},yAxis:{type:'value', max:100},series:hosts.map(h=>({name:h, type:'line', smooth:true, showSymbol:false,data:times.map(t=>{const i=ts.findIndex((x,k)=>x===t&&host[k]===h); return i<0?null:cpu[i];})}))};"
+   },
+   "id": 6,
+   "gridPos": {
+    "x": 12,
+    "y": 18,
+    "w": 12,
+    "h": 9
+   }
+  },
+  {
+   "type": "marcusolsson-dynamictext-panel",
+   "title": "Business Text: host summary (ClickHouse)",
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "ch"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "ch"
+     },
+     "editorType": "sql",
+     "rawSql": "SELECT host, round(avg(cpu),1) AS avg_cpu, round(max(cpu),1) AS max_cpu, round(avg(mem),1) AS avg_mem FROM demo.metrics WHERE $__timeFilter(ts) GROUP BY host ORDER BY host",
+     "format": 1
+    }
+   ],
+   "description": "",
+   "options": {
+    "renderMode": "allRows",
+    "defaultContent": "no data",
+    "contentPartials": [],
+    "editors": [],
+    "editor": {
+     "language": "html"
+    },
+    "helpers": "",
+    "afterRender": "",
+    "styles": "",
+    "content": "<div style=\"padding:6px\"><h3>Hosts</h3>{{#each data}}<p><b>{{host}}</b> \u2014 avg CPU {{avg_cpu}}% \u00b7 max {{max_cpu}}% \u00b7 mem {{avg_mem}}%</p>{{/each}}</div>"
+   },
+   "id": 7,
+   "gridPos": {
+    "x": 0,
+    "y": 27,
+    "w": 12,
+    "h": 9
+   }
+  },
+  {
+   "type": "marcusolsson-calendar-panel",
+   "title": "Business Calendar: deploys & maintenance (ClickHouse)",
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "ch"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "ch"
+     },
+     "editorType": "sql",
+     "rawSql": "SELECT title, start, end, kind FROM demo.events",
+     "format": 1
+    }
+   ],
+   "description": "",
+   "options": {
+    "textField": "title",
+    "timeField": "start",
+    "endTimeField": "end",
+    "labelFields": [
+     "kind"
+    ],
+    "descriptionField": [],
+    "defaultView": "month",
+    "colors": "event",
+    "dateFormat": "inherit",
+    "views": [
+     "day",
+     "week",
+     "month",
+     "agenda"
+    ],
+    "annotations": false,
+    "timeRangeType": "default",
+    "displayFields": [
+     "text",
+     "time",
+     "labels"
+    ],
+    "scrollToTime": {
+     "hours": 0,
+     "minutes": 0
+    }
+   },
+   "id": 8,
+   "gridPos": {
+    "x": 12,
+    "y": 27,
+    "w": 12,
+    "h": 9
+   }
+  },
+  {
+   "type": "grafana-graphviz-panel",
+   "title": "Graphviz: architecture (DOT code)",
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "ch"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "ch"
+     },
+     "editorType": "sql",
+     "rawSql": "SELECT 1",
+     "format": 1
+    }
+   ],
+   "description": "",
+   "options": {
+    "inputMode": "code",
+    "layoutEngine": "dot",
+    "rankDirection": "LR",
+    "namedThresholds": [],
+    "edgeOverrides": [],
+    "nodeOverrides": [],
+    "dotDiagram": "digraph G { node [shape=box style=rounded]; client -> web -> api -> db; api -> cache; web -> cdn; }"
+   },
+   "id": 9,
+   "gridPos": {
+    "x": 0,
+    "y": 36,
+    "w": 12,
+    "h": 9
+   }
+  },
+  {
+   "type": "volkovlabs-table-panel",
+   "title": "Business Table: Prometheus targets (Infinity)",
+   "datasource": {
+    "type": "yesoreyeram-infinity-datasource",
+    "uid": "inf"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "yesoreyeram-infinity-datasource",
+      "uid": "inf"
+     },
+     "type": "json",
+     "source": "url",
+     "format": "table",
+     "parser": "backend",
+     "url": "http://prometheus:9090/api/v1/targets",
+     "root_selector": "data.activeTargets",
+     "url_options": {
+      "method": "GET",
+      "data": "",
+      "params": [],
+      "headers": []
+     },
+     "columns": [
+      {
+       "selector": "labels.job",
+       "text": "job",
+       "type": "string"
+      },
+      {
+       "selector": "health",
+       "text": "health",
+       "type": "string"
+      },
+      {
+       "selector": "scrapeUrl",
+       "text": "url",
+       "type": "string"
+      },
+      {
+       "selector": "lastScrapeDuration",
+       "text": "duration_s",
+       "type": "number"
+      }
+     ]
+    }
+   ],
+   "description": "",
+   "options": {
+    "isColumnManagerAvailable": false,
+    "nestedObjects": [],
+    "saveUserPreference": false,
+    "showFiltersInColumnManager": false,
+    "showSortingInColumnManager": false,
+    "tables": [
+     {
+      "actionsColumnConfig": {
+       "alignment": "start",
+       "fontSize": "sm",
+       "label": "",
+       "width": {
+        "auto": false,
+        "value": 100
+       }
+      },
+      "addRow": {
+       "enabled": false,
+       "permission": {
+        "mode": "",
+        "userRole": []
+       },
+       "request": {
+        "datasource": "",
+        "payload": {}
+       }
+      },
+      "deleteRow": {
+       "enabled": false,
+       "permission": {
+        "mode": "",
+        "userRole": []
+       },
+       "request": {
+        "datasource": "",
+        "payload": {}
+       }
+      },
+      "expanded": false,
+      "items": [
+       {
+        "aggregation": "none",
+        "appearance": {
+         "alignment": "start",
+         "background": {
+          "applyToRow": false
+         },
+         "colors": {},
+         "header": {
+          "fontSize": "md"
+         },
+         "width": {
+          "auto": false,
+          "min": 20,
+          "value": 100
+         },
+         "wrap": true
+        },
+        "edit": {
+         "editor": {
+          "type": "string"
+         },
+         "enabled": false,
+         "permission": {
+          "mode": "",
+          "userRole": []
+         }
+        },
+        "enabled": true,
+        "field": {
+         "name": "job",
+         "source": "A"
+        },
+        "fileCell": {
+         "size": "md",
+         "text": "",
+         "variant": "primary"
+        },
+        "filter": {
+         "enabled": false,
+         "mode": "client",
+         "variable": ""
+        },
+        "footer": [],
+        "gauge": {
+         "mode": "basic",
+         "valueDisplayMode": "text",
+         "valueSize": 14
+        },
+        "group": false,
+        "label": "",
+        "newRowEdit": {
+         "editor": {
+          "type": "string"
+         },
+         "enabled": false
+        },
+        "objectId": "",
+        "pin": "",
+        "scale": "auto",
+        "sort": {
+         "descFirst": false,
+         "enabled": false
+        },
+        "type": "auto"
+       },
+       {
+        "aggregation": "none",
+        "appearance": {
+         "alignment": "start",
+         "background": {
+          "applyToRow": false
+         },
+         "colors": {},
+         "header": {
+          "fontSize": "md"
+         },
+         "width": {
+          "auto": false,
+          "min": 20,
+          "value": 100
+         },
+         "wrap": true
+        },
+        "edit": {
+         "editor": {
+          "type": "string"
+         },
+         "enabled": false,
+         "permission": {
+          "mode": "",
+          "userRole": []
+         }
+        },
+        "enabled": true,
+        "field": {
+         "name": "health",
+         "source": "A"
+        },
+        "fileCell": {
+         "size": "md",
+         "text": "",
+         "variant": "primary"
+        },
+        "filter": {
+         "enabled": false,
+         "mode": "client",
+         "variable": ""
+        },
+        "footer": [],
+        "gauge": {
+         "mode": "basic",
+         "valueDisplayMode": "text",
+         "valueSize": 14
+        },
+        "group": false,
+        "label": "",
+        "newRowEdit": {
+         "editor": {
+          "type": "string"
+         },
+         "enabled": false
+        },
+        "objectId": "",
+        "pin": "",
+        "scale": "auto",
+        "sort": {
+         "descFirst": false,
+         "enabled": false
+        },
+        "type": "auto"
+       },
+       {
+        "aggregation": "none",
+        "appearance": {
+         "alignment": "start",
+         "background": {
+          "applyToRow": false
+         },
+         "colors": {},
+         "header": {
+          "fontSize": "md"
+         },
+         "width": {
+          "auto": false,
+          "min": 20,
+          "value": 100
+         },
+         "wrap": true
+        },
+        "edit": {
+         "editor": {
+          "type": "string"
+         },
+         "enabled": false,
+         "permission": {
+          "mode": "",
+          "userRole": []
+         }
+        },
+        "enabled": true,
+        "field": {
+         "name": "url",
+         "source": "A"
+        },
+        "fileCell": {
+         "size": "md",
+         "text": "",
+         "variant": "primary"
+        },
+        "filter": {
+         "enabled": false,
+         "mode": "client",
+         "variable": ""
+        },
+        "footer": [],
+        "gauge": {
+         "mode": "basic",
+         "valueDisplayMode": "text",
+         "valueSize": 14
+        },
+        "group": false,
+        "label": "",
+        "newRowEdit": {
+         "editor": {
+          "type": "string"
+         },
+         "enabled": false
+        },
+        "objectId": "",
+        "pin": "",
+        "scale": "auto",
+        "sort": {
+         "descFirst": false,
+         "enabled": false
+        },
+        "type": "auto"
+       },
+       {
+        "aggregation": "none",
+        "appearance": {
+         "alignment": "start",
+         "background": {
+          "applyToRow": false
+         },
+         "colors": {},
+         "header": {
+          "fontSize": "md"
+         },
+         "width": {
+          "auto": false,
+          "min": 20,
+          "value": 100
+         },
+         "wrap": true
+        },
+        "edit": {
+         "editor": {
+          "type": "string"
+         },
+         "enabled": false,
+         "permission": {
+          "mode": "",
+          "userRole": []
+         }
+        },
+        "enabled": true,
+        "field": {
+         "name": "duration_s",
+         "source": "A"
+        },
+        "fileCell": {
+         "size": "md",
+         "text": "",
+         "variant": "primary"
+        },
+        "filter": {
+         "enabled": false,
+         "mode": "client",
+         "variable": ""
+        },
+        "footer": [],
+        "gauge": {
+         "mode": "basic",
+         "valueDisplayMode": "text",
+         "valueSize": 14
+        },
+        "group": false,
+        "label": "",
+        "newRowEdit": {
+         "editor": {
+          "type": "string"
+         },
+         "enabled": false
+        },
+        "objectId": "",
+        "pin": "",
+        "scale": "auto",
+        "sort": {
+         "descFirst": false,
+         "enabled": false
+        },
+        "type": "auto"
+       }
+      ],
+      "name": "Table",
+      "pagination": {
+       "defaultPageSize": 10,
+       "enabled": false,
+       "mode": "client"
+      },
+      "rowHighlight": {
+       "backgroundColor": "transparent",
+       "columnId": "",
+       "enabled": false,
+       "scrollTo": "",
+       "smooth": false,
+       "variable": ""
+      },
+      "showHeader": true,
+      "update": {
+       "datasource": "",
+       "payload": {}
+      }
+     }
+    ],
+    "tabsSorting": false,
+    "toolbar": {
+     "alignment": "left",
+     "export": false,
+     "exportFormats": []
+    }
+   },
+   "id": 10,
+   "gridPos": {
+    "x": 12,
+    "y": 36,
+    "w": 12,
+    "h": 9
+   }
+  }
+ ],
+ "templating": {
+  "list": []
+ }
+}

@@ -1,0 +1,96 @@
+{
+ "uid": "graphviz",
+ "title": "06 Graphviz",
+ "schemaVersion": 41,
+ "version": 1,
+ "refresh": "30s",
+ "tags": [
+  "demo"
+ ],
+ "time": {
+  "from": "now-6h",
+  "to": "now"
+ },
+ "panels": [
+  {
+   "type": "grafana-graphviz-panel",
+   "title": "Graphviz: architecture (DOT code)",
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "ch"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "ch"
+     },
+     "editorType": "sql",
+     "rawSql": "SELECT 1",
+     "format": 1
+    }
+   ],
+   "description": "",
+   "options": {
+    "inputMode": "code",
+    "layoutEngine": "dot",
+    "rankDirection": "LR",
+    "namedThresholds": [],
+    "edgeOverrides": [],
+    "nodeOverrides": [],
+    "dotDiagram": "digraph G { node [shape=box style=rounded]; client -> web -> api -> db; api -> cache; web -> cdn; }"
+   },
+   "id": 1,
+   "gridPos": {
+    "x": 0,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   }
+  },
+  {
+   "type": "grafana-graphviz-panel",
+   "title": "Graphviz: diagram from a ClickHouse query",
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "ch"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "ch"
+     },
+     "editorType": "sql",
+     "rawSql": "SELECT dot FROM demo.graph",
+     "format": 1
+    }
+   ],
+   "description": "",
+   "options": {
+    "inputMode": "query",
+    "dotDiagram": "",
+    "dotQueryConfig": {
+     "fieldName": "dot"
+    },
+    "layoutEngine": "dot",
+    "rankDirection": "LR",
+    "namedThresholds": [],
+    "edgeOverrides": [],
+    "nodeOverrides": []
+   },
+   "id": 2,
+   "gridPos": {
+    "x": 12,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   }
+  }
+ ],
+ "templating": {
+  "list": []
+ }
+}

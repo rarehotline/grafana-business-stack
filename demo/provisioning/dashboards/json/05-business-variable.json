@@ -1,0 +1,119 @@
+{
+ "uid": "business-variable",
+ "title": "05 Business Variable",
+ "schemaVersion": 41,
+ "version": 1,
+ "refresh": "30s",
+ "tags": [
+  "demo"
+ ],
+ "time": {
+  "from": "now-6h",
+  "to": "now"
+ },
+ "panels": [
+  {
+   "type": "volkovlabs-variable-panel",
+   "title": "Business Variable: pick a host",
+   "datasource": {
+    "type": "datasource",
+    "uid": "grafana"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "datasource",
+      "uid": "grafana"
+     }
+    }
+   ],
+   "description": "",
+   "options": {
+    "variable": "host"
+   },
+   "id": 1,
+   "gridPos": {
+    "x": 0,
+    "y": 0,
+    "w": 12,
+    "h": 12
+   }
+  },
+  {
+   "type": "timeseries",
+   "title": "CPU of the selected host",
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "ch"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "ch"
+     },
+     "editorType": "sql",
+     "rawSql": "SELECT $__timeInterval(ts) AS time, host, avg(cpu) AS cpu FROM demo.metrics WHERE $__timeFilter(ts) AND host = '$host' GROUP BY time, host ORDER BY time",
+     "format": 0
+    }
+   ],
+   "description": "",
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    }
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percent",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 12
+     }
+    },
+    "overrides": []
+   },
+   "id": 2,
+   "gridPos": {
+    "x": 12,
+    "y": 0,
+    "w": 12,
+    "h": 12
+   }
+  }
+ ],
+ "templating": {
+  "list": [
+   {
+    "name": "host",
+    "type": "custom",
+    "query": "web,api,db",
+    "label": "host",
+    "current": {
+     "text": "web",
+     "value": "web"
+    },
+    "options": [
+     {
+      "text": "web",
+      "value": "web",
+      "selected": true
+     },
+     {
+      "text": "api",
+      "value": "api",
+      "selected": false
+     },
+     {
+      "text": "db",
+      "value": "db",
+      "selected": false
+     }
+    ]
+   }
+  ]
+ }
+}

@@ -1,0 +1,107 @@
+{
+ "uid": "business-text",
+ "title": "03 Business Text",
+ "schemaVersion": 41,
+ "version": 1,
+ "refresh": "30s",
+ "tags": [
+  "demo"
+ ],
+ "time": {
+  "from": "now-6h",
+  "to": "now"
+ },
+ "panels": [
+  {
+   "type": "marcusolsson-dynamictext-panel",
+   "title": "Business Text: host summary (ClickHouse)",
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "ch"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "ch"
+     },
+     "editorType": "sql",
+     "rawSql": "SELECT host, round(avg(cpu),1) AS avg_cpu, round(max(cpu),1) AS max_cpu, round(avg(mem),1) AS avg_mem FROM demo.metrics WHERE $__timeFilter(ts) GROUP BY host ORDER BY host",
+     "format": 1
+    }
+   ],
+   "description": "",
+   "options": {
+    "renderMode": "allRows",
+    "defaultContent": "no data",
+    "contentPartials": [],
+    "editors": [],
+    "editor": {
+     "language": "html"
+    },
+    "helpers": "",
+    "afterRender": "",
+    "styles": "",
+    "content": "<div style=\"padding:6px\"><h3>Hosts</h3>{{#each data}}<p><b>{{host}}</b> \u2014 avg CPU {{avg_cpu}}% \u00b7 max {{max_cpu}}% \u00b7 mem {{avg_mem}}%</p>{{/each}}</div>"
+   },
+   "id": 1,
+   "gridPos": {
+    "x": 0,
+    "y": 0,
+    "w": 12,
+    "h": 12
+   }
+  },
+  {
+   "type": "bargauge",
+   "title": "Max CPU by host (ClickHouse)",
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "ch"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "ch"
+     },
+     "editorType": "sql",
+     "rawSql": "SELECT host, max(cpu) AS max_cpu FROM demo.metrics WHERE $__timeFilter(ts) GROUP BY host ORDER BY host",
+     "format": 1
+    }
+   ],
+   "description": "",
+   "options": {
+    "orientation": "horizontal",
+    "displayMode": "gradient",
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "values": true,
+     "fields": "/^max_cpu$/"
+    }
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percent",
+     "min": 0,
+     "max": 100
+    },
+    "overrides": []
+   },
+   "id": 2,
+   "gridPos": {
+    "x": 12,
+    "y": 0,
+    "w": 12,
+    "h": 12
+   }
+  }
+ ],
+ "templating": {
+  "list": []
+ }
+}

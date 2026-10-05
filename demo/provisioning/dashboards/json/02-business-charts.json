@@ -1,0 +1,94 @@
+{
+ "uid": "business-charts",
+ "title": "02 Business Charts",
+ "schemaVersion": 41,
+ "version": 1,
+ "refresh": "30s",
+ "tags": [
+  "demo"
+ ],
+ "time": {
+  "from": "now-6h",
+  "to": "now"
+ },
+ "panels": [
+  {
+   "type": "volkovlabs-echarts-panel",
+   "title": "Business Charts: CPU by host (ECharts)",
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "ch"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "ch"
+     },
+     "editorType": "sql",
+     "rawSql": "SELECT toStartOfFiveMinutes(ts) AS ts, host, round(avg(cpu), 1) AS cpu FROM demo.metrics WHERE $__timeFilter(ts) GROUP BY ts, host ORDER BY ts",
+     "format": 1
+    }
+   ],
+   "description": "",
+   "options": {
+    "getOption": "const f=context.panel.data.series[0].fields; const get=n=>f.find(x=>x.name===n).values;const ts=get('ts'), host=get('host'), cpu=get('cpu'); const hosts=[...new Set(host)];const times=[...new Set(ts)].sort((a,b)=>a-b);return {tooltip:{trigger:'axis'}, legend:{data:hosts, textStyle:{color:'#ccc'}},grid:{left:40,right:20,top:40,bottom:30},xAxis:{type:'category', data:times.map(t=>new Date(t).toLocaleTimeString().slice(0,5))},yAxis:{type:'value', max:100},series:hosts.map(h=>({name:h, type:'line', smooth:true, showSymbol:false,data:times.map(t=>{const i=ts.findIndex((x,k)=>x===t&&host[k]===h); return i<0?null:cpu[i];})}))};"
+   },
+   "id": 1,
+   "gridPos": {
+    "x": 0,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   }
+  },
+  {
+   "type": "timeseries",
+   "title": "Same data as a native time series",
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "ch"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "ch"
+     },
+     "editorType": "sql",
+     "rawSql": "SELECT $__timeInterval(ts) AS time, host, avg(cpu) AS cpu FROM demo.metrics WHERE $__timeFilter(ts) GROUP BY time, host ORDER BY time",
+     "format": 0
+    }
+   ],
+   "description": "",
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    }
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percent",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 12
+     }
+    },
+    "overrides": []
+   },
+   "id": 2,
+   "gridPos": {
+    "x": 12,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   }
+  }
+ ],
+ "templating": {
+  "list": []
+ }
+}

@@ -1,0 +1,76 @@
+{
+ "uid": "business-calendar",
+ "title": "04 Business Calendar",
+ "schemaVersion": 41,
+ "version": 1,
+ "refresh": "30s",
+ "tags": [
+  "demo"
+ ],
+ "time": {
+  "from": "now-6h",
+  "to": "now"
+ },
+ "panels": [
+  {
+   "type": "marcusolsson-calendar-panel",
+   "title": "Business Calendar: deploys & maintenance (ClickHouse)",
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "ch"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "ch"
+     },
+     "editorType": "sql",
+     "rawSql": "SELECT title, start, end, kind FROM demo.events",
+     "format": 1
+    }
+   ],
+   "description": "",
+   "options": {
+    "textField": "title",
+    "timeField": "start",
+    "endTimeField": "end",
+    "labelFields": [
+     "kind"
+    ],
+    "descriptionField": [],
+    "defaultView": "month",
+    "colors": "event",
+    "dateFormat": "inherit",
+    "views": [
+     "day",
+     "week",
+     "month",
+     "agenda"
+    ],
+    "annotations": false,
+    "timeRangeType": "default",
+    "displayFields": [
+     "text",
+     "time",
+     "labels"
+    ],
+    "scrollToTime": {
+     "hours": 0,
+     "minutes": 0
+    }
+   },
+   "id": 1,
+   "gridPos": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 20
+   }
+  }
+ ],
+ "templating": {
+  "list": []
+ }
+}
