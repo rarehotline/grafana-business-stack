@@ -1,0 +1,24 @@
+services:
+  grafana:
+    image: docker.io/grafana/grafana-oss:latest
+    ports:
+      - 3000:3000/tcp
+    volumes:
+      - ./plugins:/var/lib/grafana/plugins:ro
+      - ./provisioning:/etc/grafana/provisioning:ro
+      - grafana-data:/var/lib/grafana-data
+    environment:
+      GF_PATHS_DATA: /var/lib/grafana-data
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      # Our own builds are not signed by Grafana, so allow-list them explicitly.
+      GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: grafana-clickhouse-datasource,marcusolsson-calendar-panel,grafana-graphviz-panel,yesoreyeram-infinity-datasource,marcusolsson-dynamictext-panel,marcusolsson-static-datasource,volkovlabs-echarts-panel,volkovlabs-table-panel,volkovlabs-variable-panel
+      # Nothing should phone home to grafana.com.
+      GF_PLUGINS_PREINSTALL_DISABLED: "true"
+      GF_PLUGINS_PLUGIN_ADMIN_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      GF_ANALYTICS_CHECK_FOR_PLUGIN_UPDATES: "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_NEWS_NEWS_FEED_ENABLED: "false"
+volumes:
+  grafana-data:

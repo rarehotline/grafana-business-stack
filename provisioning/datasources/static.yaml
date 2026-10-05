@@ -1,0 +1,6 @@
+apiVersion: 1
+# The plugin repos' own demo dashboards reference these uids.
+datasources:
+  - {name: Business Input, type: marcusolsson-static-datasource, uid: P1D2C73DC01F2359B, access: proxy, isDefault: true}
+  - {name: Business Input (charts), type: marcusolsson-static-datasource, uid: 4ytGZmF4k, access: proxy}
+  - {name: Static, type: marcusolsson-static-datasource, uid: U0HP2Rv4z, access: proxy}
